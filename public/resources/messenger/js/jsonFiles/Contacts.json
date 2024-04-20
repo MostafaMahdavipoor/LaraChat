@@ -1,0 +1,32 @@
+[
+  {
+    "nationalCode": "",
+    "fName": "Php Channel",
+    "lName": "",
+    "phone": "",
+    "fullNname": "Php Channel",
+    "userName": "@php_channel",
+    "profile": "../../resources/messenger/image/user.png",
+    "chatType": "channel",
+    "sender": "Php Channel",
+    "lastMessage": "Php",
+    "date": "12:00 ب.ط",
+    "numberMessages": "10",
+    "messageSendingStatus": ""
+  },
+  {
+    "nationalCode": "",
+    "fName": "farawin",
+    "lName": "",
+    "phone": "",
+    "fullNname": "farawin",
+    "userName": "@farawin",
+    "profile": "../../resources/messenger/image/user.png",
+    "chatType": "group",
+    "sender": "Fateme Zaka",
+    "lastMessage": "tag p,span,h1,img",
+    "date": "18:00 ب.ط",
+    "numberMessages": "20",
+    "messageSendingStatus": ""
+  }
+]
