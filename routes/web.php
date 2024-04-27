@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\messenger\MessageController;
+use App\Http\Controllers\Messenger\MessageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginRegisterController;
 
@@ -16,7 +16,7 @@ use App\Http\Controllers\Auth\LoginRegisterController;
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+    return view('Messenger.login');
 });
 
 Route::controller(LoginRegisterController::class)->group(function() {
@@ -27,8 +27,11 @@ Route::controller(LoginRegisterController::class)->group(function() {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::post('/logout', 'logout')->name('logout');
 });
-Route::prefix('messages')->middleware('auth')->group(function () {
+Route::prefix('messages')->group(function () {
     Route::get('/set', [MessageController::class, 'set']);
     Route::get('/get', [MessageController::class, 'get']);
+    Route::post('/uploadFile', [MessageController::class, 'uploadFile']);
+    Route::get('/getContact', [MessageController::class, 'getContact']);
+    Route::get('/SetContact', [MessageController::class, 'SetContact']);
 });
 

@@ -1,4 +1,5 @@
-@extends('auth.layouts')
+@extends('Messenger.layouts')
+
 
     <!DOCTYPE html>
 <html lang="fa">
@@ -37,6 +38,21 @@
         <div class="chatlist__icon--sticky">
             <div class="chatlist__icon">
                 <span class="chatlist__title">Messenger</span>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ Auth::user()->name }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();"
+                            >Logout</a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                                @csrf
+                            </form>
+                        </li>
+                    </ul>
+                </li>
                 <span onclick="addContact()" class="chatlist__addcontact"></span>
                 <span onclick="refreshChatlist()" id="refreshIcon" class="chatlist__refresh"></span>
             </div>
@@ -103,9 +119,9 @@
                 بی صدا
             </div>
 
-            <form id="uploadFileForm" enctype="multipart/form-data" class="section-Contact">
+            <form   method="post" id="uploadFileForm" enctype="multipart/form-data" class="section-Contact">
                 @csrf
-                <input type="file" name='fileToUpload' id="file">
+                <input type="file" name="file_upload" id="file">
                 <button id='uploadBtn' type="submit" class="submit-add">بارگذاری</button>
             </form>
 
@@ -118,13 +134,13 @@
     <form name="form-contact" id="form-contact" method="post">
         <h3 class="chatlist__title">اضافه کردن مخاطب</h3>
         <div class="main-input">
-            <input class="input-add" type="tel" name="phone-Contact" id="phone-Contact" placeholder=" " autofocus
+            <input class="input-add" type="tel" name="phone-Contact" id="phone-Contact" placeholder="شماره تماس" autofocus
                    required/>
             <div class="cut"></div>
             <label for="phone-Contact" class="placeholder">شماره موبایل مخاطب</label>
         </div>
         <div class="main-input">
-            <input class="input-add" type="text" name="name-Contact" id="name-Contact" placeholder=" " required/>
+            <input class="input-add" type="text" name="name-Contact" id="name-Contact" placeholder="نام مخاطب" required/>
             <div class="cut cut-long"></div>
             <label for="Contact" class="placeholder">نام مخاطب</label>
         </div>

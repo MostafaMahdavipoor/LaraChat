@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->text('chat_name');
             $table->enum('chat_type', ['pv','group','channel'])->default('group');
+            $table->text('content_name')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -28,6 +29,7 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
+     *
      *
      * @return void
      */

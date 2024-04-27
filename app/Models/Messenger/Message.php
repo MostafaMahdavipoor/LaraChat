@@ -1,6 +1,6 @@
 <?php
-namespace App\Models\messenger;
-
+namespace App\Models\Messenger;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -22,16 +22,16 @@ class Message extends Model
         return $data;
     }
 
-    public static function getMessage($uploaded)
+    public static function getMessage($page,$chatName)
     {
-        $perPage = 5;
-        $dataPage = self::orderBy('send_time', 'desc')->paginate($perPage);
-
-        if ($uploaded > $dataPage->lastPage()) {
-            //throw new \OutOfBoundsException('Uploaded page number exceeds available pages.');
-        }
-
+        $dataPage = self::where('chat_name',$chatName)->paginate(5, ['*'], 'page', $page);
         return $dataPage;
     }
+    public static function uploadFile($name, $userID, $chatName)
+    {
+        $model = self::create(['content_name' => $name, 'send_time' => time(), 'user_id' => $userID, 'chat_name' => $chatName]);
+        return $model;
+    }
+
 
 }

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Messenger\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class LoginRegisterController extends Controller
 {
@@ -27,7 +29,7 @@ class LoginRegisterController extends Controller
      */
     public function register()
     {
-        return view('auth.register');
+        return view('Messenger.register');
     }
 
     /**
@@ -64,7 +66,7 @@ class LoginRegisterController extends Controller
      */
     public function login()
     {
-        return view('auth.login');
+        return view('Messenger.login');
     }
 
     /**
@@ -99,12 +101,12 @@ class LoginRegisterController extends Controller
     {
         if(Auth::check())
         {
-            return view('auth.dashboard');
+            return view('Messenger.dashboard');
         }
 
         return redirect()->route('login')
             ->withErrors([
-                'email' => 'Please login to access the dashboard.',
+                'email' => 'ایمیل یا رمز عبور صحیح نمی باشد.',
             ])->onlyInput('email');
     }
 

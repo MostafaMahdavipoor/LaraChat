@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
@@ -23,7 +24,7 @@ class MessagesTableSeeder extends Seeder
                 DB::table('messages')->insert([
                     'text_message' => "Sample message $i",
                     'send_time' => time(),
-                    'user_id' => 2,
+                    'user_id' => 1,
                     'chat_name' => "farawin",
                     'chat_type' => 'group',
                     'created_at' => now(),

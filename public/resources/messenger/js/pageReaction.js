@@ -16,6 +16,7 @@ const footerChannels = document.getElementById("footerChannels");
 const dialogIconattach = document.getElementById("dialog__attach");
 const Contacts = chatlist.getElementsByClassName("chatlist__cadre");
 let activeChatlist;
+let chatPageChanged;
 
 const ChatList = function () {
     let ClosedChatList = () => {
@@ -157,10 +158,20 @@ const CreateContactBox = (object) => {
         let chatlistisActive = document.getElementsByClassName(
             "chatlist--is--active"
         );
+        function clearChatPage() {
+            for (const element of dialogBody.children) {
+                element.style.display = "none"
+            }
+            chatPageChanged = true
+            for (const element of dialogBody.children) {
+                dialogBody.removeChild(element)
+            }
+        }
         let nameDialog = document.getElementById("dialog__name");
         activeChatlist = chatlistName.textContent;
         nameDialog.textContent = chatlistName.textContent;
         dialogSection.setAttribute("style", "display:block;");
+
         fetch("resources/messenger/js/jsonFiles/ChatList.json")
             .then(function (response) {
                 return response.json();
@@ -290,41 +301,6 @@ const CreateContactBox = (object) => {
     ContactlistSection.appendChild(chatlistCard);
 };
 
-const addContact = function () {
-    let sectionAddContact = document.getElementById("addContact");
-    sectionAddContact.style = "display: block;";
-
-    let Messenger = document.getElementById("messenger");
-    Messenger.setAttribute("style", "display:none;");
-
-    let closebtn = document.getElementById("closed");
-    closebtn.onclick = closeWindow = () => {
-        sectionAddContact.style = "display: none;";
-        Messenger.removeAttribute("style", "display:block;");
-    };
-
-    let addbtn = document.getElementById("addition");
-    addbtn.onclick = AddContact = () => {
-        const phone = document.forms["form-contact"]["phone-Contact"].value;
-        const Name = document.forms["form-contact"]["name-Contact"].value;
-
-        const contactObject = {
-            fName: Name,
-            phone: phone,
-            fullNname: Name,
-            chatType: "pv",
-        };
-
-        CreateContactBox(contactObject);
-
-        alert("مخاطب با موفقیت اضافه شد");
-
-        document.forms["form-contact"]["phone-Contact"].value = null;
-        document.forms["form-contact"]["name-Contact"].value = null;
-
-        closeWindow();
-    };
-};
 const refreshChatlist = function () {
     if (Contacts.length > 0) {
         ContactlistSection.innerHTML = "";
@@ -573,7 +549,6 @@ $(document).ready(function () {
             url: "messages/set",
             data: values + "&activeChatList=" + activeChatlist,
             success: function () {
-                sendMesseg(dialog.value, "text", 0, 1, null);
                 dialog.value = null;
             },
             error:function (error){
@@ -747,9 +722,59 @@ function creatMessageMenu(messageBox) {
 
 //! fetch data from database
 
- let uploaded = 0;
-
+let page = 1;
+let uploaded = 0;
 const uploadMessage = async () => {
+    await $.ajax({
+        type: "get",
+        url: "messages/get",
+        dataType: "json",
+        data: {page: page, chatName: activeChatlist},
+        success: function (response) {
+            data = response["data"]["data"];
+            for (let i = uploaded; i < data.length; i++) {
+                let {id, text_message, content_name, user_id, send_time, chat_name} = data[i];
+
+                function getTime(send_time) {
+                    const date = new Date(send_time * 1000);
+                    const time = [date.getHours(), date.getMinutes()];
+                    return time.join(":");
+                }
+
+                if (chat_name == activeChatlist) {
+                    if (user_id == response.currentUserID) {
+                        sendMesseg(text_message, "text", 0, id, getTime(send_time));
+                    } else {
+                        sendMesseg(text_message, "text", 1, id, getTime(send_time));
+                    }
+                }
+             else {
+                continue;
+            }
+            }
+            if (data.length != 5) {
+                uploaded = data.length;
+            } else {
+                page += 1;
+                uploaded = 0;
+            }
+        },
+        error: function (error) {
+            const errors = error.responseJSON.errors
+            for (const errorKey in errors) {
+                errors[errorKey].forEach((error) => {
+
+                });
+            }
+        }
+    });
+};
+
+
+// let uploaded = 0;
+/*
+const uploadMessage = async () => {
+
     await $.ajax({
         type: "get",
         url: "messages/get",
@@ -765,12 +790,14 @@ const uploadMessage = async () => {
                         const time = [date.getHours(), date.getMinutes()];
                         return time.join(":");
                     }
+                    console.log(user_id);
+                    console.log(response.currentUserID);
 
                     if (chat_name == activeChatlist) {
-                        if (user_id == 1) {
-                            sendMesseg(text_message, "text", 1, id, getTime(send_time));
-                        } else {
+                        if (user_id == response.currentUserID) {
                             sendMesseg(text_message, "text", 0, id, getTime(send_time));
+                        } else {
+                            sendMesseg(text_message, "text", 1, id, getTime(send_time));
                         }
                     }
                 }
@@ -782,7 +809,7 @@ const uploadMessage = async () => {
         }
     });
 };
-
+*/
 // const uploadMessage = async () => {
 //     await $.ajax({
 //         type: "get",
@@ -823,9 +850,26 @@ const uploadMessage = async () => {
 //     });
 // };
 
-
 $("#dialog__refresh").click(() => {
+    if (chatPageChanged) {
+        uploaded = 0;
+        page = 1;
+        chatPageChanged = false
+    }
     uploadMessage();
+});
+
+$(document).ready(function () {
+    setInterval(() => {
+        if (activeChatlist) {
+            if (chatPageChanged) {
+                uploaded = 0;
+                page = 1;
+                chatPageChanged = false
+            }
+            uploadMessage();
+        }
+    }, 5000);
 });
 
 function createPopupBox(text){
