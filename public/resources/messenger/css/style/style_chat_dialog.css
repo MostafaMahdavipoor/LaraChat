@@ -431,3 +431,8 @@
     background: #fff;
     border-left: 1px solid #ddd;
 } */
+.message__image{
+    width: 120px;
+    height: 100px;
+    margin: 8px;
+}

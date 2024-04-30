@@ -17,7 +17,7 @@ const dialogIconattach = document.getElementById("dialog__attach");
 const Contacts = chatlist.getElementsByClassName("chatlist__cadre");
 let activeChatlist;
 let chatPageChanged;
-
+let chatID;
 const ChatList = function () {
     let ClosedChatList = () => {
         chatlist.classList.remove("chatlist", "chatlist__Open");
@@ -162,7 +162,7 @@ const CreateContactBox = (object) => {
             for (const element of dialogBody.children) {
                 element.style.display = "none"
             }
-            chatPageChanged = true
+
             for (const element of dialogBody.children) {
                 dialogBody.removeChild(element)
             }
@@ -327,29 +327,131 @@ const IconChanger = function () {
     }
 };
 
-const sendMesseg = (
-    dialogg = dialog.value,
-    type = "text",
-    sender = 0,
-    dataId,
-    send_time
-) => {
+// const sendMesseg = (
+//     dialogg = dialog.value,
+//     type = "text",
+//     sender = 0,
+//     dataId,
+//     send_time
+// ) => {
+//     let dialogBody = document.getElementById("dialogBody");
+//     let messageSelf = document.createElement("div");
+//     let messageCard = document.createElement("div");
+//
+//     if (sender === 1) {
+//         messageCard.classList.remove("message__card", "message__card--self");
+//         messageSelf.classList.remove("message", "message__self");
+//
+//         messageSelf.classList.add("message", "message__other");
+//         messageCard.classList.add("message__card", "message__card--other");
+//     } else if (sender === 0) {
+//         messageSelf.classList.remove("message", "message__other");
+//         messageCard.classList.remove("message__card", "message__card--other");
+//
+//         messageCard.classList.add("message__card", "message__card--self");
+//         messageSelf.classList.add("message", "message__self");
+//     }
+//
+//     dialogBody.appendChild(messageSelf);
+//
+//     let messagePhoto = document.createElement("div");
+//     messagePhoto.setAttribute("class", "message__photo");
+//
+//     let messageImg = document.createElement("img");
+//     messageImg.src = "../../resources/messenger/image/user.png";
+//     messageImg.setAttribute("class", "message__img");
+//
+//     messagePhoto.appendChild(messageImg);
+//     messageSelf.appendChild(messagePhoto);
+//
+//     if (type === "voice") {
+//         let messageVoice = document.createElement("div");
+//         messageVoice.setAttribute("class", "dialog__message--voice");
+//
+//         let messageVoiceControl = document.createElement("div");
+//         messageVoiceControl.setAttribute("class", "dialog__message--voice-control");
+//         let messageVoiceControlBtn = document.createElement("button");
+//         messageVoiceControlBtn.setAttribute("class", "dialog__message--playe");
+//         messageVoiceControlBtn.addEventListener(
+//             "click",
+//             (startPlayingVoice = () => {
+//                 messageVoiceControlBtn.style = "transition: all 2s;";
+//                 wavesurfer.playPause();
+//
+//                 if (messageVoiceControlBtn.classList[0] === "dialog__message--pause") {
+//                     messageVoiceControlBtn.setAttribute(
+//                         "class",
+//                         "dialog__message--playe"
+//                     );
+//                 } else {
+//                     messageVoiceControlBtn.setAttribute(
+//                         "class",
+//                         "dialog__message--pause"
+//                     );
+//                 }
+//
+//                 wavesurfer.once("finsh", () => {
+//                     wavesurfer.stop();
+//                 });
+//             })
+//         );
+//         messageVoiceControl.appendChild(messageVoiceControlBtn);
+//
+//         let messageVoiceWave = document.createElement("div");
+//         messageVoiceWave.setAttribute("class", "dialog__message--voice-Wave");
+//         let messageVoiceWaveForm = document.createElement("div");
+//         messageVoiceWaveForm.setAttribute("class", "dialog__message--play");
+//         messageVoiceWaveForm.id = "waveform";
+//         messageVoiceWave.appendChild(messageVoiceWaveForm);
+//
+//         messageVoice.appendChild(messageVoiceControl);
+//         messageVoice.appendChild(messageVoiceWave);
+//         messageCard.appendChild(messageVoice);
+//     } else if (type === "text") {
+//         let messageText = document.createElement("span");
+//         let messageSendTime = document.createElement("span");
+//         messageSendTime.textContent = send_time;
+//         messageSendTime.setAttribute("class", "message__sendTime");
+//         messageText.setAttribute("class", "message__text");
+//         messageSelf.setAttribute("data-id", dataId);
+//         messageText.textContent = dialogg;
+//         messageCard.appendChild(messageText);
+//         messageCard.appendChild(messageSendTime);
+//         messageSelf.addEventListener("contextmenu", (e) => {
+//             e.preventDefault();
+//             const sectionTools = creatMessageMenu(messageSelf);
+//             messageCard.appendChild(sectionTools);
+//         });
+//         dialog.value = null;
+//     }
+//     messageSelf.appendChild(messageCard);
+// };
+const sendMesseg = (dialogg = dialog.value, type = "text", sender = 0, dataId, send_time) => {
     let dialogBody = document.getElementById("dialogBody");
     let messageSelf = document.createElement("div");
     let messageCard = document.createElement("div");
-
     if (sender === 1) {
         messageCard.classList.remove("message__card", "message__card--self");
         messageSelf.classList.remove("message", "message__self");
 
         messageSelf.classList.add("message", "message__other");
         messageCard.classList.add("message__card", "message__card--other");
+        messageSelf.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+            const sectionTools = createMessageMenu(messageSelf, 'other');
+            messageCard.appendChild(sectionTools);
+        });
     } else if (sender === 0) {
         messageSelf.classList.remove("message", "message__other");
         messageCard.classList.remove("message__card", "message__card--other");
 
         messageCard.classList.add("message__card", "message__card--self");
         messageSelf.classList.add("message", "message__self");
+        messageSelf.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+            const sectionTools = createMessageMenu(messageSelf, 'self');
+            messageCard.appendChild(sectionTools);
+        });
     }
 
     dialogBody.appendChild(messageSelf);
@@ -372,29 +474,20 @@ const sendMesseg = (
         messageVoiceControl.setAttribute("class", "dialog__message--voice-control");
         let messageVoiceControlBtn = document.createElement("button");
         messageVoiceControlBtn.setAttribute("class", "dialog__message--playe");
-        messageVoiceControlBtn.addEventListener(
-            "click",
-            (startPlayingVoice = () => {
-                messageVoiceControlBtn.style = "transition: all 2s;";
-                wavesurfer.playPause();
+        messageVoiceControlBtn.addEventListener("click", (startPlayingVoice = () => {
+            messageVoiceControlBtn.style = "transition: all 2s;";
+            wavesurfer.playPause();
 
-                if (messageVoiceControlBtn.classList[0] === "dialog__message--pause") {
-                    messageVoiceControlBtn.setAttribute(
-                        "class",
-                        "dialog__message--playe"
-                    );
-                } else {
-                    messageVoiceControlBtn.setAttribute(
-                        "class",
-                        "dialog__message--pause"
-                    );
-                }
+            if (messageVoiceControlBtn.classList[0] === "dialog__message--pause") {
+                messageVoiceControlBtn.setAttribute("class", "dialog__message--playe");
+            } else {
+                messageVoiceControlBtn.setAttribute("class", "dialog__message--pause");
+            }
 
-                wavesurfer.once("finsh", () => {
-                    wavesurfer.stop();
-                });
-            })
-        );
+            wavesurfer.once("finsh", () => {
+                wavesurfer.stop();
+            });
+        }));
         messageVoiceControl.appendChild(messageVoiceControlBtn);
 
         let messageVoiceWave = document.createElement("div");
@@ -417,15 +510,17 @@ const sendMesseg = (
         messageText.textContent = dialogg;
         messageCard.appendChild(messageText);
         messageCard.appendChild(messageSendTime);
-        messageSelf.addEventListener("contextmenu", (e) => {
-            e.preventDefault();
-            const sectionTools = creatMessageMenu(messageSelf);
-            messageCard.appendChild(sectionTools);
-        });
         dialog.value = null;
+    } else if (type == "file") {
+        let file = document.createElement("img");
+        file.setAttribute("class", "message__image");
+        messageSelf.setAttribute("data-id", dataId);
+        file.src = dialogg;
+        messageCard.appendChild(file);
     }
     messageSelf.appendChild(messageCard);
 };
+
 const EmojiIconActiv = () => {
     const {createPicker} = window.picmo;
 
@@ -679,8 +774,7 @@ function creatMessageMenu(messageBox) {
                 td.addEventListener("click", () => {
                     if (dataID) {
                         let submitBtn = createDeletePopup("پیام حذف شود؟", "single");
-                        submitBtn.addEventListener("click", () => {
-                            deleteMessageBox(messageBox);
+                        submitBtn.addEventListener("click", () => {deleteMessageBox(messageBox);
                         });
                     }
                     sectionTools.style.display = "none";
@@ -741,17 +835,25 @@ const uploadMessage = async () => {
                     return time.join(":");
                 }
 
-                if (chat_name == activeChatlist) {
-                    if (user_id == response.currentUserID) {
-                        sendMesseg(text_message, "text", 0, id, getTime(send_time));
+                    if (response.chatName == activeChatlist) {
+                        if (content_name) {
+                            if (user_id == response.currentUserID) {
+                                sendMesseg(content_name, "file", 0, id, getTime(send_time));
+                            } else {
+                                sendMesseg(content_name, "file", 1, id, getTime(send_time));
+                            }
+                        } else if (text_message) {
+                            if (user_id == response.currentUserID) {
+                                sendMesseg(text_message, "text", 0, id, getTime(send_time));
+                            } else {
+                                sendMesseg(text_message, "text", 1, id, getTime(send_time));
+                            }
+                        }
                     } else {
-                        sendMesseg(text_message, "text", 1, id, getTime(send_time));
+                        continue;
                     }
                 }
-             else {
-                continue;
-            }
-            }
+
             if (data.length != 5) {
                 uploaded = data.length;
             } else {
@@ -773,7 +875,8 @@ const uploadMessage = async () => {
 
 // let uploaded = 0;
 /*
-const uploadMessage = async () => {
+const uploadMessage = as
+ync () => {
 
     await $.ajax({
         type: "get",
@@ -885,4 +988,104 @@ function createPopupBox(text){
     });
     box.appendChild(submitBtn);
     dialogBody.appendChild(box);
+}
+
+$("#dialog__attach").click(() => {
+    let fileUploadForm = document.getElementById('uploadFileForm')
+    fileUploadForm.style = 'display:block;'
+    $("#uploadFileForm").submit(function (event) {
+        event.preventDefault();
+        var file = document.getElementById('file').files[0];
+        var formData = $('#uploadFileForm').serialize();
+        formData += "&activeChatlist=" + activeChatlist;
+        var combinedData = new FormData();
+        combinedData.append('fileToUpload', file);
+        formData = decodeURIComponent(formData.replace(/\+/g, ' '));
+        $.each(formData.split('&'), function (index, field) {
+            var kv = field.split('=');
+            combinedData.append(kv[0], kv[1]);
+        });
+        $.ajax({
+            url: 'messages/uploadFile',
+            type: 'POST',
+            data: combinedData,
+            processData: false,
+            contentType: false,
+            success: function () {
+                $("#uploadFileForm").remove();
+            },
+            error: function (error) {
+                const errors = error.responseJSON.errors
+                for (const errorKey in errors) {
+                    errors[errorKey].forEach((error) => {
+                        createPopupBox(error)
+                    });
+                }
+            }
+        });
+    })
+})
+function createMessageMenu(messageBox, sender = 'self') {
+    let dataID = messageBox.getAttribute("data-id");
+    const sectionTools = document.createElement("section");
+    sectionTools.classList.add("section-tools");
+    const closeBtn = document.createElement("button");
+    closeBtn.classList.add("close-btn");
+    sectionTools.appendChild(closeBtn);
+    closeBtn.addEventListener("click", () => {
+        sectionTools.style.display = "none";
+    });
+    const table = document.createElement("table");
+    for (let i = 0; i < 6; i++) {
+        let tr = document.createElement("tr");
+        let td = document.createElement("td");
+        switch (i) {
+            case 0:
+                td.id = "message__tools--delete";
+                td.textContent = "حذف";
+                td.addEventListener("click", () => {
+                    if (dataID) {
+                        let submitBtn = createDeletePopup("پیام حذف شود؟", "single");
+                        submitBtn.addEventListener("click", () => {
+                            deleteMessageBox(messageBox);
+                        });
+                    }
+                    sectionTools.style.display = "none";
+                });
+                break;
+            case 1:
+                if (sender == 'other') {
+                    continue;
+                }
+                td.id = "message__tools--edit";
+                td.textContent = "ویرایش";
+                td.addEventListener("click", () => {
+                    if (dataID) {
+                        updateMessage(messageBox);
+                    }
+                    sectionTools.style.display = "none";
+                });
+                break;
+            case 2:
+                td.id = "message__tools--forward";
+                td.textContent = "هدایت";
+                break;
+            case 3:
+                td.id = "message__tools--response";
+                td.textContent = "پاسخ";
+                break;
+            case 4:
+                td.id = "message__tools--copy";
+                td.textContent = "کپی";
+                break;
+            case 5:
+                td.id = "message__tools--pin";
+                td.textContent = "سنجاق";
+                break;
+        }
+        tr.appendChild(td);
+        table.appendChild(tr);
+    }
+    sectionTools.appendChild(table);
+    return sectionTools;
 }

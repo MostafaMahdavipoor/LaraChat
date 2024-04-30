@@ -25,7 +25,7 @@ class GetMessageRequest extends FormRequest
     {
         return [
             'page'=>'bail|required',
-            'chatID'=>'bail|required|exists:chats,id'
+            'chatName'=>'nullable'
         ];
     }
 }

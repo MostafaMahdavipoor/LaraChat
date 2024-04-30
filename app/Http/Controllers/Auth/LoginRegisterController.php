@@ -66,6 +66,10 @@ class LoginRegisterController extends Controller
      */
     public function login()
     {
+        if(Auth::check())
+        {
+            return view('Messenger.dashboard');
+        }
         return view('Messenger.login');
     }
 
@@ -122,7 +126,7 @@ class LoginRegisterController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login')
-            ->withSuccess('You have logged out successfully!');;
+            ->withSuccess('');
     }
 
 }

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->longText('text_message');
+            $table->longText('text_message')->nullable();
             $table->integer('send_time');
             $table->unsignedBigInteger('user_id');
             $table->text('chat_name');

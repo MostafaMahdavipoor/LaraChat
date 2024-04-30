@@ -24,7 +24,7 @@ class MessagesTableSeeder extends Seeder
                 DB::table('messages')->insert([
                     'text_message' => "Sample message $i",
                     'send_time' => time(),
-                    'user_id' => 1,
+                    'user_id' => 2,
                     'chat_name' => "farawin",
                     'chat_type' => 'group',
                     'created_at' => now(),
